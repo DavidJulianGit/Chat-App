@@ -4,11 +4,9 @@ Welcome to the Chat App! This is a simple chat application built using React Nat
 
 ## Why a Mobile Chat App?
 
-More and more people use their phones for daily tasks such as shopping, creating to-do lists, communicating with friends, scheduling meetings, and more. As a result, many companies offer native mobile versions of their web apps, or even skip creating a web app entirely.
-
 Traditionally, building high-quality mobile apps required significant time and resources due to the need for specialized programmers for different platforms like iOS and Android. However, advancements in technology such as React Native have simplified this process by enabling developers to build and maintain mobile applications with just one codebase.
 
-This Chat App demonstrates the use of React Native, Expo, and Google Firestore Database to create a native chat app optimized for both Android and iOS devices. This app can serve as a valuable addition to your portfolio and showcase your knowledge of JavaScript mobile development.
+This Chat App demonstrates the use of React Native, Expo, and Google Firestore Database to create a native chat app optimized for both Android and iOS devices.
 
 ## Features
 
