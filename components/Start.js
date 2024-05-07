@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Platform, KeyboardAvoidingView } from 'react-native';
 
 const StartScreen = ({ navigation }) => {
    // Define state for user name and selected color
@@ -58,7 +58,7 @@ const StartScreen = ({ navigation }) => {
                   <Text style={styles.startChattingButtonText}>Start Chatting</Text>
                </TouchableOpacity>
             </View>
-
+            {Platform.OS === "ios" ? <KeyboardAvoidingView behavior="padding" /> : null}
          </View>
       </ImageBackground>
    );
