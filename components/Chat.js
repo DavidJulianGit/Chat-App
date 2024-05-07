@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 
-
-const ChatScreen = ({ route, navigation }) => {
+const ChatScreen = ({ route, navigation, db }) => {
    // Routing parameters
-   const { name, backgroundColor } = route.params;
+   const { name, backgroundColor, userID } = route.params;
 
    // Chatmessages
    const [messages, setMessages] = useState([]);
@@ -14,9 +14,9 @@ const ChatScreen = ({ route, navigation }) => {
    const [colorSchema, setColorSchema] = useState({ textColor: '#ffffff', bubbleColorL: '#b5b5b5', bubbleColorR: '#a4a4a4' });
 
 
-   // Append new messages to the chat
+   // Append new messages to the DB
    const onSend = (newMessages) => {
-      setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
+      addDoc(collection(db, "MessagesCollection"), newMessages[0]);
    }
 
    // Get textColor and bubbleColor for the chosen backgroundColor
@@ -40,32 +40,38 @@ const ChatScreen = ({ route, navigation }) => {
    // Setting the title of the Screen
    useEffect(() => {
 
-      navigation.setOptions({ title: name });
+
    }, [name, navigation]);
 
-   // Load initial messages
+   // Load messages
    useEffect(() => {
+      // Set screen title
+      navigation.setOptions({ title: 'Chat' });
 
+      // DB Query
+      const qu = query(collection(db, "MessagesCollection"), orderBy("createdAt", "desc"));
+
+      // Create DB listener 
+      const unsubMessages = onSnapshot(qu, (documentsSnapshot) => {
+
+         let newMessage = [];
+
+         // read chat messages
+         documentsSnapshot.forEach(doc => {
+            newMessage.push({ id: doc.id, ...doc.data(), createdAt: new Date(doc.data().createdAt.toMillis()), })
+         });
+
+         // save messages in local state
+         setMessages(newMessage);
+      });
+
+      // 
       getColorSchema(backgroundColor);
 
-      setMessages([
-         {
-            _id: 1,
-            text: `Welcome ${name}`,
-            createdAt: new Date(),
-            user: {
-               _id: 2,
-               name: 'React Native',
-               avatar: 'https://ideogram.ai/api/images/direct/dViQFzG3TGKg9RHRccjQPA.png',
-            },
-         },
-         {
-            _id: 2,
-            text: 'You have entered the chat.',
-            createdAt: new Date(),
-            system: true,
-         },
-      ]);
+      return () => {
+         // code to execute when the component will be unmounted - unsubscribe onSnapShot listener
+         if (unsubMessages) unsubMessages();
+      }
    }, []);
 
    // Setting message bubble style
@@ -100,11 +106,14 @@ const ChatScreen = ({ route, navigation }) => {
             renderBubble={renderBubble}
             onSend={messages => onSend(messages)}
             user={{
-               _id: 1
+               _id: userID,
+               name: name,
             }}
             renderSystemMessage={renderSystemMessage}
          />
-
+         {Platform.OS === "android" ? (
+            <KeyboardAvoidingView behavior="height" />
+         ) : null}
       </View>
    );
 }
