@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ChatScreen = ({ route, navigation, db }) => {
+const ChatScreen = ({ route, navigation, db, isConnected }) => {
    // Routing parameters
    const { name, backgroundColor, userID } = route.params;
 
@@ -37,42 +38,69 @@ const ChatScreen = ({ route, navigation, db }) => {
       }
    }
 
-   // Setting the title of the Screen
-   useEffect(() => {
 
+   let unsubMessages;
 
-   }, [name, navigation]);
-
-   // Load messages
    useEffect(() => {
       // Set screen title
       navigation.setOptions({ title: 'Chat' });
 
-      // DB Query
-      const qu = query(collection(db, "MessagesCollection"), orderBy("createdAt", "desc"));
+      // load messages from DB if the device is connected to the internet, otherwise load from cache
+      if (isConnected === true) {
 
-      // Create DB listener 
-      const unsubMessages = onSnapshot(qu, (documentsSnapshot) => {
+         // unregister current onSnapshot() listener to avoid registering multiple listeners when
+         // useEffect code is re-executed.
+         if (unsubMessages) unsubMessages();
+         unsubMessages = null;
 
-         let newMessage = [];
+         // DB Query
+         const qu = query(collection(db, "MessagesCollection"), orderBy("createdAt", "desc"));
 
-         // read chat messages
-         documentsSnapshot.forEach(doc => {
-            newMessage.push({ id: doc.id, ...doc.data(), createdAt: new Date(doc.data().createdAt.toMillis()), })
+         // Create DB listener 
+         unsubMessages = onSnapshot(qu, async (documentsSnapshot) => {
+
+            let newMessage = [];
+
+            // read chat messages
+            documentsSnapshot.forEach(doc => {
+               newMessage.push({
+                  id: doc.id,
+                  ...doc.data(),
+                  createdAt: new Date(doc.data().createdAt.toMillis()),
+               })
+            });
+
+            // save new Messages in cache
+            cacheMessages(newMessage);
+
+            // save messages in local state
+            setMessages(newMessage);
          });
+      }
+      else loadCachedMessages();
 
-         // save messages in local state
-         setMessages(newMessage);
-      });
 
-      // 
+      // Colors for the Chat window according to the selected color in the start screen
       getColorSchema(backgroundColor);
 
       return () => {
          // code to execute when the component will be unmounted - unsubscribe onSnapShot listener
          if (unsubMessages) unsubMessages();
       }
-   }, []);
+   }, [isConnected]);
+
+   const cacheMessages = async (messageToChache) => {
+      try {
+         await AsyncStorage.setItem('chatMessages', JSON.stringify(messageToChache));
+      } catch (error) {
+         console.log(error.message);
+      }
+   }
+
+   const loadCachedMessages = async () => {
+      const cachedMessages = await AsyncStorage.getItem("chatMessages") || [];
+      setMessages(JSON.parse(cachedMessages));
+   }
 
    // Setting message bubble style
    const renderBubble = (props) => {
@@ -97,13 +125,18 @@ const ChatScreen = ({ route, navigation, db }) => {
       );
    };
 
-
+   // Disable the input if offline
+   const renderInputToolbar = (props) => {
+      if (isConnected) return <InputToolbar {...props} />;
+      else return null;
+   }
 
    return (
       <View style={[styles.container, { backgroundColor: backgroundColor }]}>
          <GiftedChat
             messages={messages}
             renderBubble={renderBubble}
+            renderInputToolbar={renderInputToolbar}
             onSend={messages => onSend(messages)}
             user={{
                _id: userID,
