@@ -2,9 +2,17 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+
+// import native storage 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ChatScreen = ({ route, navigation, db, isConnected }) => {
+// import custonActions
+import CustomActions from './CustomActions';
+
+//imports react native maps
+import MapView from 'react-native-maps';
+
+const ChatScreen = ({ route, navigation, db, isConnected, storage }) => {
    // Routing parameters
    const { name, backgroundColor, userID } = route.params;
 
@@ -131,12 +139,44 @@ const ChatScreen = ({ route, navigation, db, isConnected }) => {
       else return null;
    }
 
+
+   const renderCustomActions = (props) => {
+      return <CustomActions id={userID} storage={storage} {...props} />
+   }
+
+
+   const renderCustomView = (props) => {
+      const { currentMessage } = props;
+      if (currentMessage.location) {
+         return (
+            <MapView
+               style={{
+                  width: 150,
+                  height: 100,
+                  borderRadius: 13,
+                  margin: 5
+               }}
+               region={{
+                  latitude: currentMessage.location.latitude,
+                  longitude: currentMessage.location.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+               }}
+            />
+         );
+      }
+      return null;
+   }
+
+
    return (
       <View style={[styles.container, { backgroundColor: backgroundColor }]}>
          <GiftedChat
             messages={messages}
             renderBubble={renderBubble}
             renderInputToolbar={renderInputToolbar}
+            renderActions={renderCustomActions}
+            renderCustomView={renderCustomView}
             onSend={messages => onSend(messages)}
             user={{
                _id: userID,

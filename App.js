@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Alert } from 'react-native';
+import { Alert } from 'react-native';
 
 // importing Firestore Database
 import { initializeApp } from "firebase/app";
 import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
+
+// importing Firebase storage
+import { getStorage } from "firebase/storage";
 
 // importing react Navigation
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,6 +16,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StartScreen from './components/Start';
 import ChatScreen from './components/Chat';
 
+// importing netinfo
 import { useNetInfo } from "@react-native-community/netinfo";
 
 // Create the navigator
@@ -21,6 +25,9 @@ const Stack = createNativeStackNavigator();
 
 
 const App = () => {
+
+   // local state
+   const [image, setImage] = useState(null);
 
    // Config Firebase
    const firebaseConfig = {
@@ -37,6 +44,9 @@ const App = () => {
 
    // Initialize Cloud Firestore and get a reference to the service
    const db = getFirestore(app);
+
+   // Initialize Firebase storage
+   const storage = getStorage(app);
 
    // Keeping track of the internet connection status
    const connectionStatus = useNetInfo();
@@ -61,7 +71,11 @@ const App = () => {
             />
 
             <Stack.Screen name="ChatScreen">
-               {props => <ChatScreen isConnected={connectionStatus.isConnected} db={db} {...props} />}
+               {props => <ChatScreen
+                  isConnected={connectionStatus.isConnected}
+                  db={db}
+                  storage={storage}
+                  {...props} />}
             </Stack.Screen>
 
          </Stack.Navigator>
