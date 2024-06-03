@@ -55,13 +55,26 @@ To run this app locally, follow these steps:
       allow read, write: if true;
       ```
 
-   5. Initialize Firebase by copying and pasting the provided Firebase configuration into App.js.
+   5. Set authentication to anonymous (Authentication -> Sign-in method -> Anonymous)
+   6. Create storage (production mode)
+   7. Adjust the rules for the storage as you did in step 4 for the database
+   8. Register and name the app to generate the configuration code
+   9. Copy and paste the provided Firebase configuration into App.js.
 
-4. **Run the app**: Start the app using the following command:
+4. **Install Expo**
+
+   1. Install Expo on your phone via the App Store (Apple) or the Play Store (Android) to run the app on your mobile device
+   2. Install emulator (Android) or simulator (Apple) to test and develop the app on your computer
+      1. [Android Studio](https://developer.android.com/studio?hl=de) for Android devices
+      2. [Xcode](https://developer.apple.com/xcode/) for Apple devices
+
+5. **Run the app**: Start the app using the following command:
 
    ```bash
    npm start
    ```
+
+6. Have fun! ( :
 
 ## Dependencies
 
@@ -70,18 +83,10 @@ The app is built with:
 -  [React Native](https://reactnative.dev/)
 -  [React Navigation](https://reactnavigation.org/)
 -  [Expo](https://docs.expo.dev/)
+   -  [Expo ImagePicker](https://docs.expo.dev/versions/latest/sdk/imagepicker/)
+   -  [Expo MediaLibrary](https://docs.expo.dev/versions/latest/sdk/media-library/)
+   -  [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/)
 -  [Google Firestore](https://firebase.google.com/docs/firestore)
 -  [Gifted Chat Library](https://github.com/FaridSafi/react-native-gifted-chat)
 -  [AsyncStorage](https://www.npmjs.com/package/@react-native-async-storage/async-storage)
--  [Expo ImagePicker](https://docs.expo.dev/versions/latest/sdk/imagepicker/)
--  [Expo MediaLibrary](https://docs.expo.dev/versions/latest/sdk/media-library/)
--  [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/)
 -  [react-native-maps](https://www.npmjs.com/package/react-native-maps)
-
-## Contributing
-
-If you wish to contribute to this project, feel free to fork the repository and submit a pull request.
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
