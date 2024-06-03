@@ -27,14 +27,14 @@ To run this app locally, follow these steps:
 2. **Install dependencies**: Navigate to the project folder and install the required dependencies using `npm` or `yarn`.
 
    ```bash
-   cd <project-folder>
+   cd chat-app
    npm install
    ```
 
    Or, if you're using Yarn:
 
    ```bash
-   cd <project-folder>
+   cd chat-app
    yarn install
    ```
 
