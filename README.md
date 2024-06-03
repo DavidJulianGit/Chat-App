@@ -10,10 +10,9 @@ This Chat App demonstrates the use of React Native, Expo, and Google Firestore D
 
 ## Features
 
--  A page where users can enter their name and choose a background color for the chat screen before joining the chat.
--  A page displaying the conversation, as well as an input field and submit button.
--  The chat provides users with two additional communication features: sending images and location data.
--  Data gets stored online and offline.the start screen.
+-  Users can enter their name and choose a background color for the chat screen before joining the chat.
+-  Users can send and receive text messages, images and current location
+-  Data gets stored online and offline
 
 ## Installation
 
@@ -39,13 +38,30 @@ To run this app locally, follow these steps:
    yarn install
    ```
 
-3. **Run the app**: Start the app using the following command:
+3. **Set up Firebase for your project**:
+
+   1. Sign in at Google Firebase.
+   2. Create a project.
+   3. Set up Firestore Database (production mode).
+   4. Adjust rules from
+
+      ```bash
+      allow read, write: if false;
+      ```
+
+      to
+
+      ```bash
+      allow read, write: if true;
+      ```
+
+   5. Initialize Firebase by copying and pasting the provided Firebase configuration into App.js.
+
+4. **Run the app**: Start the app using the following command:
 
    ```bash
    npm start
    ```
-
-4. **Navigate the app**: Once the app starts running, you can navigate between the start screen and the chat screen using the app interface.
 
 ## Dependencies
 
@@ -56,6 +72,11 @@ The app is built with:
 -  [Expo](https://docs.expo.dev/)
 -  [Google Firestore](https://firebase.google.com/docs/firestore)
 -  [Gifted Chat Library](https://github.com/FaridSafi/react-native-gifted-chat)
+-  [AsyncStorage](https://www.npmjs.com/package/@react-native-async-storage/async-storage)
+-  [Expo ImagePicker](https://docs.expo.dev/versions/latest/sdk/imagepicker/)
+-  [Expo MediaLibrary](https://docs.expo.dev/versions/latest/sdk/media-library/)
+-  [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/)
+-  [react-native-maps](https://www.npmjs.com/package/react-native-maps)
 
 ## Contributing
 
